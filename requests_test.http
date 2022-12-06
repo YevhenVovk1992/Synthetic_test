@@ -31,3 +31,12 @@ Content-Type: application/json
 ### GET request to get_tasks with id task
 GET http://127.0.0.1:5000/todo/api/v1.0/tasks/6
 Accept: application/json
+
+
+### Send PUT request to get_tasks with json body
+PUT http://127.0.0.1:5000/todo/api/v1.0/tasks/7
+Content-Type: application/json
+
+{
+  "status": "True"
+}

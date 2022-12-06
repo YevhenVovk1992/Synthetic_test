@@ -6,7 +6,6 @@ from flask import Flask, jsonify, request, abort
 import database
 import models
 
-
 # Loading environment variables into the project
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 dotenv.load_dotenv(dotenv_path)
@@ -66,6 +65,16 @@ def get_one_task(id_task: int):
     return jsonify(get_task.to_dict())
 
 
+@app.put('/todo/api/v1.0/tasks/<int:id_task>')
+def update_task(id_task):
+    database.init_db()
+    get_task = models.Task.query.filter_by(id=id_task).first()
+    if not get_task:
+        abort(404)
+    get_task.status = bool(request.get_json().get('status'))
+    database.db_session.add(get_task)
+    database.db_session.commit()
+    return jsonify(get_task.to_dict())
 
 
 if __name__ == '__main__':
