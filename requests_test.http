@@ -1,0 +1,4 @@
+### GET request with a header
+GET http://127.0.0.1:5000/todo/api/v1.0/board
+Accept: application/json
+
