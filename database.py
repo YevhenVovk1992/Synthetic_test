@@ -5,8 +5,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-# Loading environment variables into the project
 
+# Loading environment variables into the project
 dotenv.load_dotenv()
 engine = create_engine(os.environ.get('DB_CONNECT'))
 db_session = scoped_session(sessionmaker(autocommit=False,

@@ -1,10 +1,9 @@
 import enum as lib_enum
 
-from sqlalchemy import Column, Integer, String, DateTime, Text, func, Boolean, Enum
-from database import Base
-
-from sqlalchemy import ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, Text, func, Boolean, Enum
 from sqlalchemy.orm import relationship, backref
+
+from database import Base
 
 
 class BoardStatus(lib_enum.Enum):
@@ -40,3 +39,13 @@ class Task(Base):
     board_id = Column(Integer, ForeignKey('board.id'), nullable=False)
 
     board = relationship('Board', backref=backref('task', lazy=True))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'creation_date': self.creation_date,
+            'modification_data': self.modification_data,
+            'status': self.status,
+            'text': self.text,
+            'board_id': self.board_id
+        }

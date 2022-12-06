@@ -1,6 +1,7 @@
 import os
 import dotenv
-from flask import Flask, jsonify
+
+from flask import Flask, jsonify, request
 
 import database
 import models
@@ -31,9 +32,12 @@ def get_boards():
     board_list = models.Board.query.all()
     return jsonify([item.to_dict() for item in board_list])
 
+
 @app.route('/todo/api/v1.0/tasks', methods=['GET', 'POST'])
 def get_tasks():
-    return 'Hello World!'
+    if request.method == "GET":
+        task_list = models.Task.query.all()
+        return jsonify([item.to_dict() for item in task_list])
 
 
 if __name__ == '__main__':
