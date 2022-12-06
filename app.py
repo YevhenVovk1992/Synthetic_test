@@ -77,5 +77,16 @@ def update_task(id_task):
     return jsonify(get_task.to_dict())
 
 
+@app.delete('/todo/api/v1.0/tasks/<int:id_task>')
+def delete_task(id_task):
+    database.init_db()
+    get_task = models.Task.query.filter_by(id=id_task).first()
+    if not get_task:
+        abort(404)
+    database.db_session.delete(get_task)
+    database.db_session.commit()
+    return jsonify(delete_task=id_task)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
