@@ -1,7 +1,7 @@
 import os
 import dotenv
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, make_response
 
 import database
 import models
@@ -19,6 +19,11 @@ app.secret_key = os.environ.get('SESSION_SECRET')
 @app.teardown_appcontext
 def shutdown_session(exception=None) -> None:
     database.db_session.remove()
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
 
 @app.route('/todo/api/v1.0/board', methods=['GET'])
