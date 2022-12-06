@@ -1,9 +1,33 @@
-### GET request with a header
+### GET request to get_boards
 GET http://127.0.0.1:5000/todo/api/v1.0/board
 Accept: application/json
 
 
-### GET request with a header
+### GET request to get_tasks
 GET http://127.0.0.1:5000/todo/api/v1.0/tasks
 Accept: application/json
 
+
+### GET request to get_tasks with filter by status
+GET http://127.0.0.1:5000/todo/api/v1.0/tasks?status=true
+Accept: application/json
+
+
+### GET request to get_tasks with filter by board
+GET http://127.0.0.1:5000/todo/api/v1.0/tasks?board=1
+Accept: application/json
+
+
+### Send POST request to get_tasks with json body
+POST http://127.0.0.1:5000/todo/api/v1.0/tasks
+Content-Type: application/json
+
+{
+  "text": "Create new task",
+  "board_id": "2"
+}
+
+
+### GET request to get_tasks with id task
+GET http://127.0.0.1:5000/todo/api/v1.0/tasks/6
+Accept: application/json
