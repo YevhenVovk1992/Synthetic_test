@@ -1,0 +1,22 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  web:
+    build: .
+    image: todo_list:latest
+    container_name: 'todo_list'
+    environment:
+      DB_CONNECT: ${DB_CONNECT}
+      SESSION_SECRET: ${SESSION_SECRET}
+    restart: always
+    ports:
+      - "5000:5000"
+    command: python3 app.py
+  db:
+    image: 'postgres'
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    hostname: 'postgres_database'
+    container_name: 'postgres_db'
+    restart: always
+    ports:
+      - "5432:5432"
