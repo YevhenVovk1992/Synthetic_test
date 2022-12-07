@@ -1,4 +1,6 @@
 import os
+from typing import Union
+
 import dotenv
 
 from flask import Flask, jsonify, request, abort, make_response
@@ -26,6 +28,18 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
+@app.errorhandler(400)
+def not_found(error):
+    return make_response(jsonify({'error': 'Bad request'}), 400)
+
+
+def get_task_or_404(task_id: int):
+    task = models.Task.query.filter_by(id=task_id).first()
+    if not task:
+        abort(404)
+    return task
+
+
 @app.route('/todo/api/v1.0/board', methods=['GET'])
 def get_boards():
     database.init_db()
@@ -39,67 +53,80 @@ def get_tasks():
     if request.method == "GET":
         task_list = []
         filter_param = dict(request.values)
-        if filter_param and 'status' in filter_param:
-            task_list = models.Task.query.filter_by(status=filter_param['status']).all()
-        elif filter_param and 'board' in filter_param:
-            task_list = models.Task.query.filter_by(board_id=filter_param['board']).all()
-        else:
-            abort(400)
         if not filter_param:
             task_list = models.Task.query.all()
+        else:
+            if 'status' in filter_param:
+                get_status = filter_param['status']
+                task_list = models.Task.query.filter_by(
+                    status=get_status).all() if get_status in ('true', 'false') else []
+            elif 'board' in filter_param:
+                try:
+                    board_id = int(filter_param['board'])
+                except ValueError:
+                    return jsonify({'error': 'board must be integer'}), 500
+                task_list = models.Task.query.filter_by(board_id=board_id).all()
+            if not task_list:
+                abort(400)
         return jsonify([item.to_dict() for item in task_list])
+
     if request.method == "POST":
         create_data = dict(request.get_json())
         if not create_data:
             abort(400)
         else:
-            if 'text' not in create_data and 'board_id' not in create_data:
+            if 'text' not in create_data or 'board_id' not in create_data:
                 abort(400)
+        all_board = [itm.id for itm in models.Board.query.all()]
+        get_text = create_data.get('text')
+        get_board_id = create_data.get('board_id')
+        if get_board_id not in all_board:
+            return jsonify({'error': 'board_id not in DB'}), 500
         new_task = models.Task(
-            text=create_data.get('text'),
-            board_id=create_data.get('board_id')
+            text=get_text,
+            board_id=get_board_id
         )
         try:
             database.db_session.add(new_task)
             database.db_session.commit()
         except Exception as error:
-            return jsonify(error=str(error))
+            return jsonify(error=str(error)), 502
         return jsonify(new_task.to_dict()), 201
 
 
 @app.get('/todo/api/v1.0/tasks/<int:id_task>')
 def get_one_task(id_task: int):
     database.init_db()
-    get_task = models.Task.query.filter_by(id=id_task).first()
-    if not get_task:
-        abort(404)
+    get_task = get_task_or_404(id_task)
     return jsonify(get_task.to_dict())
 
 
 @app.put('/todo/api/v1.0/tasks/<int:id_task>')
 def update_task(id_task):
     database.init_db()
-    get_task = models.Task.query.filter_by(id=id_task).first()
-    if not get_task:
-        abort(404)
+    get_task = get_task_or_404(id_task)
     new_status = request.get_json().get('status', None)
     if not new_status:
         abort(400)
-    get_task.status = bool(new_status)
-    database.db_session.add(get_task)
-    database.db_session.commit()
-    return jsonify(get_task.to_dict())
+    get_task.status = bool(new_status) if new_status in ('true', 'false') else abort(400)
+    try:
+        database.db_session.add(get_task)
+        database.db_session.commit()
+    except Exception as error:
+        return jsonify(error=str(error)), 502
+    return jsonify(get_task.to_dict()), 204
 
 
 @app.delete('/todo/api/v1.0/tasks/<int:id_task>')
 def delete_task(id_task):
     database.init_db()
-    get_task = models.Task.query.filter_by(id=id_task).first()
-    if not get_task:
-        abort(404)
-    database.db_session.delete(get_task)
-    database.db_session.commit()
-    return jsonify(delete_task=id_task)
+    get_task = get_task_or_404(id_task)
+    try:
+        database.db_session.delete(get_task)
+        database.db_session.commit()
+    except Exception as error:
+        return jsonify(error=str(error)), 502
+    return jsonify(delete_task=id_task), 204
 
 
 if __name__ == '__main__':

@@ -18,6 +18,22 @@ GET http://127.0.0.1:5000/todo/api/v1.0/tasks?board=1
 Accept: application/json
 
 
+### GET request to get_tasks with filter (bad query)
+GET http://127.0.0.1:5000/todo/api/v1.0/tasks?board=999
+Accept: application/json
+
+### GET request to get_tasks with filter (bad query)
+GET http://127.0.0.1:5000/todo/api/v1.0/tasks?accord=999
+Accept: application/json
+
+### GET request to get_tasks with filter (bad query)
+GET http://127.0.0.1:5000/todo/api/v1.0/tasks?board=1.2
+Accept: application/json
+
+### GET request to get_tasks with filter (bad query)
+GET http://127.0.0.1:5000/todo/api/v1.0/tasks?status=1
+Accept: application/json
+
 ### Send POST request to get_tasks with json body
 POST http://127.0.0.1:5000/todo/api/v1.0/tasks
 Content-Type: application/json
@@ -27,21 +43,76 @@ Content-Type: application/json
   "board_id": "2"
 }
 
+### Send POST request to get_tasks withot json body (bad request)
+POST http://127.0.0.1:5000/todo/api/v1.0/tasks
+Content-Type: application/json
+
+{
+
+}
+
+### Send POST request to get_tasks with json body (bad request)
+POST http://127.0.0.1:5000/todo/api/v1.0/tasks
+Content-Type: application/json
+
+{
+  "text_1": "Create new task",
+  "board_id": "2"
+}
+
+### Send POST request to get_tasks with json body (bad request)
+POST http://127.0.0.1:5000/todo/api/v1.0/tasks
+Content-Type: application/json
+
+{
+  "text": "Create 2 new task",
+  "board_id": '999'
+}
+
 
 ### GET request to get_tasks with id task
-GET http://127.0.0.1:5000/todo/api/v1.0/tasks/6
+GET http://127.0.0.1:5000/todo/api/v1.0/tasks/2
 Accept: application/json
 
 
-### DELETE request to get_tasks with id task
-DELETE http://127.0.0.1:5000/todo/api/v1.0/tasks/6
+### GET request to get_tasks with id task (bad request)
+GET http://127.0.0.1:5000/todo/api/v1.0/tasks/9999
 Accept: application/json
 
 
 ### Send PUT request to get_tasks with json body
-PUT http://127.0.0.1:5000/todo/api/v1.0/tasks/7
+PUT http://127.0.0.1:5000/todo/api/v1.0/tasks/12
 Content-Type: application/json
 
 {
-  "status": "True"
+  "status": "true"
 }
+
+
+### Send PUT request to get_tasks withot json body (bad request)
+PUT http://127.0.0.1:5000/todo/api/v1.0/tasks/1
+Content-Type: application/json
+
+{
+
+}
+
+
+### Send PUT request to get_tasks with json body (bad request)
+PUT http://127.0.0.1:5000/todo/api/v1.0/tasks/1
+Content-Type: application/json
+
+{
+ "status": "TRUE1"
+}
+
+
+
+### DELETE request to get_tasks with id task
+DELETE http://127.0.0.1:5000/todo/api/v1.0/tasks/12
+Accept: application/json
+
+
+### DELETE request to get_tasks with id task (bad request)
+DELETE http://127.0.0.1:5000/todo/api/v1.0/tasks/99999
+Accept: application/json
