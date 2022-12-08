@@ -1,6 +1,4 @@
 import os
-from typing import Union
-
 import dotenv
 
 from flask import Flask, jsonify, request, abort, make_response
@@ -57,9 +55,10 @@ def get_tasks():
             task_list = models.Task.query.all()
         else:
             if 'status' in filter_param:
-                get_status = filter_param['status']
-                task_list = models.Task.query.filter_by(
-                    status=get_status).all() if get_status in ('true', 'false') else []
+                if filter_param['status'] in ('True', 'true'):
+                    task_list = models.Task.query.filter_by(status=True).all()
+                elif filter_param['status'] in ('False', 'false'):
+                    task_list = models.Task.query.filter_by(status=False).all()
             elif 'board' in filter_param:
                 try:
                     board_id = int(filter_param['board'])
@@ -79,7 +78,7 @@ def get_tasks():
                 abort(400)
         all_board = [itm.id for itm in models.Board.query.all()]
         get_text = create_data.get('text')
-        get_board_id = create_data.get('board_id')
+        get_board_id = int(create_data.get('board_id'))
         if get_board_id not in all_board:
             return jsonify({'error': 'board_id not in DB'}), 500
         new_task = models.Task(
@@ -90,6 +89,7 @@ def get_tasks():
             database.db_session.add(new_task)
             database.db_session.commit()
         except Exception as error:
+            database.db_session.rollback()
             return jsonify(error=str(error)), 502
         return jsonify(new_task.to_dict()), 201
 
@@ -110,9 +110,9 @@ def update_task(id_task):
         abort(400)
     get_task.status = bool(new_status) if new_status in ('true', 'false') else abort(400)
     try:
-        database.db_session.add(get_task)
         database.db_session.commit()
     except Exception as error:
+        database.db_session.rollback()
         return jsonify(error=str(error)), 502
     return jsonify(get_task.to_dict()), 204
 
@@ -122,9 +122,10 @@ def delete_task(id_task):
     database.init_db()
     get_task = get_task_or_404(id_task)
     try:
-        database.db_session.delete(get_task)
+        database.db_session.query(models.Task).filter(models.Task.id == get_task.id).delete()
         database.db_session.commit()
     except Exception as error:
+        database.db_session.rollback()
         return jsonify(error=str(error)), 502
     return jsonify(delete_task=id_task), 204
 
