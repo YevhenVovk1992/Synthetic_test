@@ -22,17 +22,21 @@ Accept: application/json
 GET http://127.0.0.1:5000/todo/api/v1.0/tasks?board=999
 Accept: application/json
 
+
 ### GET request to get_tasks with filter (bad query)
 GET http://127.0.0.1:5000/todo/api/v1.0/tasks?accord=999
 Accept: application/json
+
 
 ### GET request to get_tasks with filter (bad query)
 GET http://127.0.0.1:5000/todo/api/v1.0/tasks?board=1.2
 Accept: application/json
 
+
 ### GET request to get_tasks with filter (bad query)
 GET http://127.0.0.1:5000/todo/api/v1.0/tasks?status=1
 Accept: application/json
+
 
 ### Send POST request to get_tasks with json body
 POST http://127.0.0.1:5000/todo/api/v1.0/tasks
@@ -43,6 +47,7 @@ Content-Type: application/json
   "board_id": "2"
 }
 
+
 ### Send POST request to get_tasks withot json body (bad request)
 POST http://127.0.0.1:5000/todo/api/v1.0/tasks
 Content-Type: application/json
@@ -50,6 +55,7 @@ Content-Type: application/json
 {
 
 }
+
 
 ### Send POST request to get_tasks with json body (bad request)
 POST http://127.0.0.1:5000/todo/api/v1.0/tasks
@@ -59,6 +65,7 @@ Content-Type: application/json
   "text_1": "Create new task",
   "board_id": "2"
 }
+
 
 ### Send POST request to get_tasks with json body (bad request)
 POST http://127.0.0.1:5000/todo/api/v1.0/tasks
@@ -105,7 +112,6 @@ Content-Type: application/json
 {
  "status": "TRUE1"
 }
-
 
 
 ### DELETE request to get_tasks with id task
