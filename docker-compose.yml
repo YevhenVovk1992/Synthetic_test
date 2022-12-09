@@ -5,7 +5,7 @@ services:
     image: todo_list:latest
     container_name: 'todo_list'
     environment:
-      DB_CONNECT: ${DB_CONNECT}
+      DB_CONNECT: ${DB_CONNECT_DOCKER}
       SESSION_SECRET: ${SESSION_SECRET}
     restart: always
     ports:

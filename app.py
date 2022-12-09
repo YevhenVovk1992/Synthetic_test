@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request, abort, make_response
 import database
 import models
 
+
 # Loading environment variables into the project
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 dotenv.load_dotenv(dotenv_path)
